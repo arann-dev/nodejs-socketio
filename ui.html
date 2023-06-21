@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat App</title>
+    <style>
+        #messages {
+            height: 300px;
+            overflow-y: scroll;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <label for="user-id-input">User ID:</label>
+    <input type="text" id="user-id-input" placeholder="Enter your user ID">
+    <button id="button">Send</button>
+</div>
+<div id="messages"></div>
+<input type="text" id="message-input" placeholder="Type a message">
+
+<button id="send-button">Send</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+<script>
+
+    // Lấy các phần tử DOM
+    const socket = io('http://localhost:3000');
+    const messagesContainer = document.getElementById('messages');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+    const testButton = document.getElementById('button')
+    const userIdInput = document.getElementById('user-id-input');
+    const userId = userIdInput.value;
+    console.log(userId)
+    // Hàm xử lý khi nhấn nút gửi tin nhắn
+    function sendMessage() {
+        const message = messageInput.value;
+        if (message !== '') {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messagesContainer.appendChild(messageElement);
+            messageInput.value = '';
+            messageInput.focus();
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }
+
+
+    function join(){
+        console.log(userIdInput.value)
+        socket.emit('addUser', {userID: userIdInput.value})
+    }
+
+    testButton.addEventListener('click', join)
+    // Bắt sự kiện khi nhấn nút gửi
+    sendButton.addEventListener('click', sendMessage);
+
+    // Bắt sự kiện khi nhấn phím Enter trong ô input tin nhắn
+    messageInput.addEventListener('keyup', function(event) {
+        if (event.keyCode === 13) {
+            sendMessage();
+        }
+    });
+</script>
+</body>
+</html>
+
+
